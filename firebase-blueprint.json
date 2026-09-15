@@ -1,0 +1,157 @@
+{
+  "entities": {
+    "account": {
+      "title": "Account",
+      "description": "Client account information in the F&A portfolio",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 200 },
+        "ind": { "type": "string", "maxLength": 100 },
+        "hq": { "type": "string", "maxLength": 150 },
+        "entity": { "type": "string", "maxLength": 50 },
+        "arr": { "type": "number" },
+        "health": { "type": "number" },
+        "stage": { "type": "string", "maxLength": 50 },
+        "csm": { "type": "string", "maxLength": 100 },
+        "since": { "type": "string", "maxLength": 50 },
+        "svc": { "type": "array", "items": { "type": "string" } },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "entity", "stage"]
+    },
+    "onboarding": {
+      "title": "Onboarding",
+      "description": "Client transition workspace",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "acct": { "type": "string", "maxLength": 200 },
+        "entityCode": { "type": "string", "maxLength": 50 },
+        "owner": { "type": "string", "maxLength": 100 },
+        "start": { "type": "string", "maxLength": 50 },
+        "golive": { "type": "string", "maxLength": 50 },
+        "phase": { "type": "number" },
+        "doneIds": { "type": "array", "items": { "type": "number" } },
+        "risks": { "type": "array" },
+        "docs": { "type": "array" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "acct", "entityCode", "owner"]
+    },
+    "rfx": {
+      "title": "RFx",
+      "description": "RFI, RFP, or RFQ opportunity and proposal builder",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "co": { "type": "string", "maxLength": 200 },
+        "type": { "type": "string", "maxLength": 50 },
+        "val": { "type": "number" },
+        "due": { "type": "string", "maxLength": 50 },
+        "stage": { "type": "string", "maxLength": 50 },
+        "owner": { "type": "string", "maxLength": 100 },
+        "score": { "type": "number" },
+        "scope": { "type": "string", "maxLength": 1000 },
+        "proposalDraft": { "type": "string", "maxLength": 50000 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "co", "type", "stage"]
+    },
+    "issue": {
+      "title": "Issue",
+      "description": "Delivery issue or operational bottleneck",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "t": { "type": "string", "maxLength": 300 },
+        "co": { "type": "string", "maxLength": 200 },
+        "sev": { "type": "string", "maxLength": 50 },
+        "cat": { "type": "string", "maxLength": 100 },
+        "st": { "type": "string", "maxLength": 50 },
+        "o": { "type": "string", "maxLength": 100 },
+        "age": { "type": "number" },
+        "sla": { "type": "string", "maxLength": 50 },
+        "opened": { "type": "string", "maxLength": 50 },
+        "resolution": { "type": "string", "maxLength": 2000 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "t", "co", "sev", "st"]
+    },
+    "thread": {
+      "title": "CommunicationThread",
+      "description": "Client communication message thread",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "subj": { "type": "string", "maxLength": 250 },
+        "co": { "type": "string", "maxLength": 200 },
+        "with": { "type": "string", "maxLength": 150 },
+        "last": { "type": "string", "maxLength": 100 },
+        "unread": { "type": "number" },
+        "msgs": { "type": "array" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "subj", "co"]
+    },
+    "taxItem": {
+      "title": "TaxCalendarItem",
+      "description": "Federal and state compliance calendar milestone",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "d": { "type": "string", "maxLength": 50 },
+        "n": { "type": "string", "maxLength": 250 },
+        "co": { "type": "string", "maxLength": 200 },
+        "type": { "type": "string", "maxLength": 50 },
+        "st": { "type": "string", "maxLength": 50 },
+        "o": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["id", "d", "n", "st"]
+    },
+    "activity": {
+      "title": "ActivityLog",
+      "description": "System activity timeline item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "t": { "type": "string", "maxLength": 500 },
+        "d": { "type": "number" },
+        "c": { "type": "string", "maxLength": 50 },
+        "i": { "type": "string", "maxLength": 50 },
+        "ic": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "t", "d"]
+    }
+  },
+  "firestore": {
+    "/accounts/{accountId}": {
+      "schema": "account",
+      "description": "Stores client account profiles and service scopes"
+    },
+    "/onboardings/{onboardingId}": {
+      "schema": "onboarding",
+      "description": "Stores client onboarding transitions and task states"
+    },
+    "/rfxs/{rfxId}": {
+      "schema": "rfx",
+      "description": "Stores RFx proposals and response states"
+    },
+    "/issues/{issueId}": {
+      "schema": "issue",
+      "description": "Stores delivery issues and bottlenecks"
+    },
+    "/threads/{threadId}": {
+      "schema": "thread",
+      "description": "Stores client communication threads"
+    },
+    "/taxCalendar/{taxId}": {
+      "schema": "taxItem",
+      "description": "Stores US tax and compliance calendar items"
+    },
+    "/activities/{activityId}": {
+      "schema": "activity",
+      "description": "Stores recent platform activities"
+    }
+  }
+}

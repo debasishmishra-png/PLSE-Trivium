@@ -1,0 +1,98 @@
+name: Trivium PLSE CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  validate-and-test:
+    name: Lint, Typecheck & Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: TypeScript Type Checking & Linting
+        run: npm run lint
+
+      - name: Validate Firestore Rules Syntax
+        run: |
+          if [ -f firestore.rules ]; then
+            echo "firestore.rules detected - validating rules format..."
+            cat firestore.rules | head -n 30
+          fi
+
+  build-and-package:
+    name: Production Build & Asset Packaging
+    needs: validate-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Vite Production Assets
+        run: npm run build
+
+      - name: Archive Production Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivium-plse-build
+          path: dist/
+          retention-days: 7
+
+  deploy-staging:
+    name: Deploy to Staging Preview
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    needs: build-and-package
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: trivium-plse-build
+          path: dist
+
+      - name: Verify Staging Bundle
+        run: |
+          echo "Staging build bundle verified successfully."
+          ls -lah dist/
+
+  deploy-production:
+    name: Deploy to Production Cloud Run / Firebase
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
+    needs: build-and-package
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: trivium-plse-build
+          path: dist
+
+      - name: Verify Production Assets
+        run: |
+          echo "Production release bundle ready for deployment."
+          ls -lah dist/

@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    match /accounts/{accountId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidId(accountId);
+      allow delete: if isSignedIn();
+    }
+
+    match /onboardings/{onboardingId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidId(onboardingId);
+      allow delete: if isSignedIn();
+    }
+
+    match /rfxs/{rfxId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidId(rfxId);
+      allow delete: if isSignedIn();
+    }
+
+    match /issues/{issueId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidId(issueId);
+      allow delete: if isSignedIn();
+    }
+
+    match /threads/{threadId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidId(threadId);
+      allow delete: if isSignedIn();
+    }
+
+    match /taxCalendar/{taxId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidId(taxId);
+      allow delete: if isSignedIn();
+    }
+
+    match /workstreams/{workstreamId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidId(workstreamId);
+      allow delete: if isSignedIn();
+    }
+
+    match /documents/{docId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidId(docId);
+      allow delete: if isSignedIn();
+    }
+
+    match /activities/{activityId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidId(activityId);
+      allow delete: if isSignedIn();
+    }
+
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

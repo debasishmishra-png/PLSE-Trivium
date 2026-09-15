@@ -1,0 +1,6 @@
+{
+  "name": "PLSE — Trivium F&A Delivery Platform",
+  "description": "Comprehensive F&A outsourcing (FAO), Target Operating Model design, client onboarding transitions, RFx lifecycle management, and US compliance delivery ecosystem.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
